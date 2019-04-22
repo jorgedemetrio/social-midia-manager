@@ -90,6 +90,7 @@ public class ControleRedeSocialThread implements Runnable {
 			}
 			rede.esperar();
 		}
+		driver.close();
 		driver = null;
 		jobService.removeEvento(configuracao.getDescricao());
 	}
