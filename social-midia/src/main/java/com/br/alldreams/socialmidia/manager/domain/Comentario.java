@@ -33,7 +33,7 @@ public class Comentario implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "description")
+	@Column(name = "description", nullable = true, unique = true, insertable = true, updatable = false, length = 255)
 	private String descricao;
 
 }

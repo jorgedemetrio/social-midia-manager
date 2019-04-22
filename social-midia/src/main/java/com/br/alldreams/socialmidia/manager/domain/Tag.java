@@ -34,7 +34,7 @@ public class Tag implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "description")
+	@Column(name = "description", nullable = false, unique = true, insertable = true, updatable = false, length = 45)
 	private String descricao;
 
 }

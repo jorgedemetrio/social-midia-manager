@@ -3,8 +3,11 @@
  */
 package com.br.alldreams.socialmidia.manager.service.impl.rede;
 
+import java.util.Random;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.br.alldreams.socialmidia.manager.domain.Configuracao;
 import com.br.alldreams.socialmidia.manager.service.impl.JobServiceImpl;
@@ -25,7 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class RedeSocialAcoes {
 	public static final int UM_SEGUNDO = 1000;
 
-	public static final int MAX_SCROLLS = 30;
+	public static final int MAX_SCROLLS = 20;
+	private final static Random rnd = new Random();
 
 	public static void esperar() {
 		try {
@@ -38,6 +42,15 @@ public abstract class RedeSocialAcoes {
 	public static void esperar(final int tempo) {
 		try {
 			Thread.currentThread().sleep(UM_SEGUNDO * tempo);
+		} catch (InterruptedException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	public static void esperar(final int inicio, final int fim) {
+		try {
+
+			Thread.currentThread().sleep(inicio + (UM_SEGUNDO * rnd.nextInt(fim - inicio)));
 		} catch (InterruptedException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -59,7 +72,13 @@ public abstract class RedeSocialAcoes {
 	public abstract Boolean curtirTag();
 
 	public void descer() {
-		getJs().executeAsyncScript("window.scrollTo(0,document.body.scrollHeight);");
+		try {
+			esperar();
+			getJs().executeScript("setTimeout(function(){ window.scrollTo(0,document.body.scrollHeight);  }, 500);");
+			esperar();
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
 
 	}
 
@@ -70,5 +89,36 @@ public abstract class RedeSocialAcoes {
 			js = (JavascriptExecutor) getDriver();
 		}
 		return js;
+	}
+
+	public WebElement getParent(final WebElement webElement) {
+		try {
+			return (WebElement) getJs().executeScript("return arguments[0].parentElement;", webElement);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+		return null;
+	}
+
+	public void topo() {
+		try {
+			esperar();
+			getJs().executeScript("document.sobe = function (){\r\n" + 
+					"	if(window.scrollY > 5) { \r\n" + 
+					"		if(window.scrollY - 100 > 5){\r\n" + 
+					"			window.scrollTo(0, window.scrollY - 220);\r\n" + 
+					"			setTimeout(function(){document.sobe();}, 10);\r\n" + 
+					"		}\r\n" + 
+					"		else{\r\n" + 
+					"			window.scrollTo(0, 0);\r\n" + 
+					"		}\r\n" + 
+					"	}\r\n" + 
+					"}\r\n" + 
+					"document.sobe();");
+			esperar();
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+		}
+
 	}
 }

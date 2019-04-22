@@ -3,6 +3,8 @@
  */
 package com.br.alldreams.socialmidia.manager.service.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -60,8 +62,16 @@ public class ControleRedeSocialThread implements Runnable {
 		} else
 			driver = null;
 
-		if (TipoRedeEnum.INSTAGRAM.equals(getConfiguracao().getUsuario().getTipo())) {
-			rede = new Instagram(configuracao, jobService, driver);
+		if (driver != null) {
+			if (TipoRedeEnum.INSTAGRAM.equals(getConfiguracao().getUsuario().getTipo())) {
+				rede = new Instagram(configuracao, jobService, driver);
+			}
+
+			// Maximize window
+			driver.manage().window().maximize();
+
+			// Set the Script Timeout to 20 seconds
+			driver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
 		}
 	}
 

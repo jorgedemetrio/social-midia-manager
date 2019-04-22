@@ -72,16 +72,26 @@ public class JobServiceImpl implements JobService {
 	public void startService() {
 		Calendar cal = Calendar.getInstance();
 
-		String hr = String.valueOf(cal.get(Calendar.HOUR_OF_DAY)).concat(String.valueOf(cal.get(Calendar.MINUTE)));
+		String hr = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
+		if (hr.length() <= 1)
+			hr = "0".concat(hr);
+
+		String mins = String.valueOf(cal.get(Calendar.MINUTE));
+		if (mins.length() <= 1)
+			mins = "0".concat(mins);
+		hr = hr.concat(mins);
 
 		List<Configuracao> list = configuracaoRepository.getConfiguracoesAtivas(hr);
 
 		for (Configuracao configuracao : list) {
 			if (isNull(configuracoes.get(configuracao.getDescricao()))) {
 				Thread t = new Thread(new ControleRedeSocialThread(configuracao, this));
-				configuracoes.put(configuracao.getDescricao(), t);
-				t.start();
-
+				try {
+					configuracoes.put(configuracao.getDescricao(), t);
+					t.start();
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
 			}
 		}
 	}

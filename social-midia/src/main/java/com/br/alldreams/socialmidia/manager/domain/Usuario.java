@@ -38,17 +38,17 @@ public class Usuario implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "name")
+	@Column(name = "name", nullable = false, unique = true, insertable = true, updatable = false, length = 255)
 	private String nome;
 
-	@Column(name = "user")
+	@Column(name = "user", nullable = false, unique = false, insertable = true, updatable = false, length = 25)
 	private String usuario;
 
-	@Column(name = "pass")
+	@Column(name = "pass", nullable = false, unique = false, insertable = true, updatable = false, length = 255)
 	private String senha;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "type")
+	@Column(name = "type", nullable = false, unique = false, insertable = true, updatable = false, length = 20)
 	private TipoRedeEnum tipo;
 
 	@OneToMany(mappedBy = "usuario")

@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -34,13 +36,15 @@ public class Historico implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "url")
+	@Column(name = "url", nullable = false, unique = false, insertable = true, updatable = true, length = 255)
 	private String url;
 
-	@Column(name = "comment")
+	@ManyToOne
+	@JoinColumn(name = "comment", nullable = false, unique = false, insertable = true, updatable = false)
 	private Comentario comentario;
 
-	@Column(name = "tag")
+	@ManyToOne
+	@JoinColumn(name = "tag", nullable = false, unique = false, insertable = true, updatable = false)
 	private Tag tag;
 
 }

@@ -3,7 +3,10 @@
  */
 package com.br.alldreams.socialmidia.manager.service.impl.rede.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -37,14 +40,35 @@ public class Instagram extends RedeSocialAcoes {
 		getDriver().get("https://www.instagram.com/");
 
 		for (int i = 0; i < MAX_SCROLLS; i++) {
-			descer();
-			esperar(5);
+			try {
+				descer();
+			} catch (Exception ex) {
+				log.error(ex.getMessage(), ex);
+			}
+			esperar(1, 3);
 		}
 
-		List<WebElement> lista = getDriver().findElements(By.className("glyphsSpriteHeart__outline__24__grey_9"));
+		topo();
+		esperar(30);
+
+		List<WebElement> lista = getDriver().findElements(By.cssSelector("button span.glyphsSpriteHeart__outline__24__grey_9[aria-label='Curtir']"));
+		// By.className("glyphsSpriteHeart__outline__24__grey_9"));
+		WebElement coracao = null;
 		for (WebElement webElement : lista) {
-			webElement.findElement(By.xpath("./..")).click();
-			esperar(2);
+
+			// while (lista != null && lista.size() > 1) {
+//			WebElement webElement = lista.get(0);
+			try {
+				coracao = getParent(webElement);
+				if (coracao != null && "button".equalsIgnoreCase(coracao.getTagName())) {
+					coracao.click();
+				}
+			} catch (Exception ex) {
+				log.error(ex.getMessage(), ex);
+			}
+			// lista =
+			// getDriver().findElements(By.className("glyphsSpriteHeart__outline__24__grey_9"));
+			esperar(1, 4);
 		}
 
 		return Boolean.TRUE;
@@ -55,27 +79,50 @@ public class Instagram extends RedeSocialAcoes {
 
 		List<Tag> tags = getConfiguracao().getTags();
 
+		Collections.sort(tags, new Comparator<Tag>() {
+			Random rnd = new Random();
+
+			@Override
+			public int compare(Tag o1, Tag o2) {
+				return rnd.nextInt();
+			}
+
+		});
 		for (Tag tag : tags) {
 			getDriver().get("https://www.instagram.com/explore/tags/" + tag.getDescricao());
 
 			for (int i = 0; i < MAX_SCROLLS; i++) {
 				descer();
-				esperar(5);
+				esperar(1, 3);
 			}
-			WebElement coracao = null;
-			WebElement fechar = null;
+			topo();
+			esperar(30);
+			List<WebElement> coracaos = null;
 			List<WebElement> lista = getDriver().findElements(By.className("v1Nh3"));
 			for (WebElement webElement : lista) {
-				webElement.findElement(By.xpath("./..")).click();
+				webElement.click();
 				esperar(2);
-				coracao = getDriver().findElement(By.className("glyphsSpriteHeart__outline__24__grey_9"));
-				if (coracao != null) {
-					coracao.findElement(By.xpath("./..")).click();
+				try {
+					coracaos = getDriver().findElements(By.className("glyphsSpriteHeart__outline__24__grey_9"));
+					if (coracaos != null) {
+						for (WebElement coracao : coracaos) {
+							WebElement bt = getParent(coracao);
+							if (bt != null && "button".equalsIgnoreCase(bt.getTagName())) {
+								getParent(coracao).click();
+								break;
+							}
+						}
+
+					}
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
 				}
 				esperar(2);
-				fechar = getDriver().findElement(By.className("ckWGn").tagName("button"));
-				if (fechar != null)
-					fechar.click();
+				try {
+					getDriver().findElement(By.tagName("button").className("ckWGn")).click();
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
 
 			}
 
@@ -101,7 +148,7 @@ public class Instagram extends RedeSocialAcoes {
 			}
 		}
 		esperar(10);
-		for (WebElement element : getDriver().findElements(By.tagName("button").className("HoLwm").className("aOOlW"))) {
+		for (WebElement element : getDriver().findElements(By.tagName("button").className("HoLwm"))) {
 			element.click();
 			break;
 		}
