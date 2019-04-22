@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class SocialMidiaApplication {
 
 	public static void main(String[] args) {
+
+		// new CriptografiaUtils(new SegurancaConfBeans("teste")).criptografia("teste");
 		ConfigurableApplicationContext context = SpringApplication.run(SocialMidiaApplication.class, args);
 
 		// context.getBean(JobService.class).startService();

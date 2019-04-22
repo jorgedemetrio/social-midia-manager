@@ -11,7 +11,7 @@ import com.br.alldreams.socialmidia.manager.domain.Configuracao;
 @Repository
 public interface ConfiguracaoRepository extends JpaRepository<Configuracao, Long> {
 
-	@Query(name = "getConfiguracoesAtivas", value = "FROM Configuracao c WHERE c.horaInicio >= :hora AND c.horaFim <= :hora ")
+	@Query(name = "getConfiguracoesAtivas", value = "FROM Configuracao c WHERE c.horaInicio >= :hora AND c.horaFim <= :hora AND c.habilitado = true ")
 	public List<Configuracao> getConfiguracoesAtivas(final String hora);
 
 }

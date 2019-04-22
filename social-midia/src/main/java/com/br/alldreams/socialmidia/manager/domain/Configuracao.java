@@ -80,4 +80,7 @@ public class Configuracao implements Serializable {
 
 	@Column(name = "sharePercent", nullable = true, unique = false, insertable = true, updatable = true, columnDefinition = "INT(3) DEFAULT 0")
 	private Integer percentualCompartilhada;
+
+	@Column(name = "enable", nullable = true, unique = false, insertable = true, updatable = true, columnDefinition = "TYNINT(1) DEFAULT 1")
+	private Boolean habilitado;
 }

@@ -34,6 +34,22 @@ public class Instagram extends RedeSocialAcoes {
 		super(configuracao, jobService, driver);
 	}
 
+	private void curtir(List<WebElement> lista) {
+		WebElement coracao = null;
+		for (WebElement webElement : lista) {
+
+			try {
+				coracao = getParent(webElement);
+				if (coracao != null && "button".equalsIgnoreCase(coracao.getTagName())) {
+					coracao.click();
+				}
+			} catch (Exception ex) {
+				log.error(ex.getMessage(), ex);
+			}
+			esperar(1, 4);
+		}
+	}
+
 	@Override
 	public Boolean curtirHome() {
 
@@ -52,23 +68,10 @@ public class Instagram extends RedeSocialAcoes {
 		esperar(30);
 
 		List<WebElement> lista = getDriver().findElements(By.cssSelector("button span.glyphsSpriteHeart__outline__24__grey_9[aria-label='Curtir']"));
-		// By.className("glyphsSpriteHeart__outline__24__grey_9"));
-		WebElement coracao = null;
-		for (WebElement webElement : lista) {
 
-			// while (lista != null && lista.size() > 1) {
-//			WebElement webElement = lista.get(0);
-			try {
-				coracao = getParent(webElement);
-				if (coracao != null && "button".equalsIgnoreCase(coracao.getTagName())) {
-					coracao.click();
-				}
-			} catch (Exception ex) {
-				log.error(ex.getMessage(), ex);
-			}
-			// lista =
-			// getDriver().findElements(By.className("glyphsSpriteHeart__outline__24__grey_9"));
-			esperar(1, 4);
+		while (lista != null && lista.size() > 1) {
+			curtir(lista);
+			lista = getDriver().findElements(By.cssSelector("button span.glyphsSpriteHeart__outline__24__grey_9[aria-label='Curtir']"));
 		}
 
 		return Boolean.TRUE;
