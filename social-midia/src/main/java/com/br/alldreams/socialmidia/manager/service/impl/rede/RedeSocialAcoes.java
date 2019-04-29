@@ -67,6 +67,16 @@ public abstract class RedeSocialAcoes {
 
 	private JavascriptExecutor js = null;
 
+	private int contador = 0;
+
+	public void contar() {
+		if (++contador > 100) {
+			esperar(60 * 10);
+			contador = 0;
+		}
+
+	}
+
 	public abstract Boolean curtirHome();
 
 	public abstract Boolean curtirTag();
@@ -103,22 +113,14 @@ public abstract class RedeSocialAcoes {
 	public void topo() {
 		try {
 			esperar();
-			getJs().executeScript("document.sobe = function (){\r\n" + 
-					"	if(window.scrollY > 5) { \r\n" + 
-					"		if(window.scrollY - 100 > 5){\r\n" + 
-					"			window.scrollTo(0, window.scrollY - 220);\r\n" + 
-					"			setTimeout(function(){document.sobe();}, 10);\r\n" + 
-					"		}\r\n" + 
-					"		else{\r\n" + 
-					"			window.scrollTo(0, 0);\r\n" + 
-					"		}\r\n" + 
-					"	}\r\n" + 
-					"}\r\n" + 
-					"document.sobe();");
+			getJs().executeScript("document.sobe = function (){\r\n" + "	if(window.scrollY > 5) { \r\n" + "		if(window.scrollY - 100 > 5){\r\n"
+					+ "			window.scrollTo(0, window.scrollY - 220);\r\n" + "			setTimeout(function(){document.sobe();}, 10);\r\n" + "		}\r\n"
+					+ "		else{\r\n" + "			window.scrollTo(0, 0);\r\n" + "		}\r\n" + "	}\r\n" + "}\r\n" + "document.sobe();");
 			esperar();
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
 
 	}
+
 }

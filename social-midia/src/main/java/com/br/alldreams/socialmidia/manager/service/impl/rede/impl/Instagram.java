@@ -30,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Instagram extends RedeSocialAcoes {
 
+	private Random rnd = new Random();
+
 	public Instagram(@NonNull Configuracao configuracao, @NonNull JobServiceImpl jobService, @NonNull WebDriver driver) {
 		super(configuracao, jobService, driver);
 	}
@@ -71,6 +73,7 @@ public class Instagram extends RedeSocialAcoes {
 
 		while (lista != null && lista.size() > 1) {
 			curtir(lista);
+			contar();
 			lista = getDriver().findElements(By.cssSelector("button span.glyphsSpriteHeart__outline__24__grey_9[aria-label='Curtir']"));
 		}
 
@@ -82,15 +85,17 @@ public class Instagram extends RedeSocialAcoes {
 
 		List<Tag> tags = getConfiguracao().getTags();
 
-		Collections.sort(tags, new Comparator<Tag>() {
-			Random rnd = new Random();
+		rorder(tags);
 
-			@Override
-			public int compare(Tag o1, Tag o2) {
-				return rnd.nextInt();
-			}
-
-		});
+//		Collections.sort(tags, new Comparator<Tag>() {
+//			Random rnd = new Random();
+//
+//			@Override
+//			public int compare(Tag o1, Tag o2) {
+//				return rnd.nextInt();
+//			}
+//
+//		});
 		for (Tag tag : tags) {
 			getDriver().get("https://www.instagram.com/explore/tags/" + tag.getDescricao());
 
@@ -120,12 +125,29 @@ public class Instagram extends RedeSocialAcoes {
 				} catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
+
 				esperar(2);
+//				try {
+//					if (Boolean.TRUE) {// rnd.nextInt(5) <= 2 && !getConfiguracao().getComentarios().isEmpty()) {
+//						String valor = Comentario.class.cast(rorder(getConfiguracao().getComentarios()).get(0)).getDescricao();
+//
+//						esperar();
+//						getJs().executeScript("setTimeout(function(){$$('.Ypffh')[0].value=\"" + valor + "\";},500);");
+//
+//						esperar(2);
+//						getDriver().findElement(By.tagName("button").className("_0mzm-")).click();
+//						esperar(1);
+//					}
+//				} catch (Exception ex) {
+//					log.error(ex.getMessage(), ex);
+//				}
+
 				try {
 					getDriver().findElement(By.tagName("button").className("ckWGn")).click();
 				} catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
+				contar();
 
 			}
 
@@ -157,6 +179,20 @@ public class Instagram extends RedeSocialAcoes {
 		}
 
 		return Boolean.TRUE;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List rorder(List listas) {
+		Collections.sort(listas, new Comparator<Object>() {
+			Random rnd = new Random();
+
+			@Override
+			public int compare(Object o1, Object o2) {
+				return rnd.nextInt();
+			}
+
+		});
+		return listas;
 	}
 
 }
