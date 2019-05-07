@@ -69,10 +69,18 @@ public abstract class RedeSocialAcoes {
 
 	private int contador = 0;
 
+	private int contadorMax = 0;
+
 	public void contar() {
-		if (++contador > 100) {
-			esperar(60 * 10);
+		if (contadorMax == 0) {
+			contadorMax = rnd.nextInt(120);
+		}
+		if (++contador > contadorMax) {
+			System.out.println("Pausando " + getConfiguracao().getDescricao());
+			esperar((60 * 10) + contadorMax);
 			contador = 0;
+			contadorMax = 0;
+			System.out.println("Voltando com " + getConfiguracao().getDescricao());
 		}
 
 	}

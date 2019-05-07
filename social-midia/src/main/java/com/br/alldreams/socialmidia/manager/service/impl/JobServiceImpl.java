@@ -62,6 +62,8 @@ public class JobServiceImpl implements JobService {
 	@Autowired
 	private ConfiguracaoRepository configuracaoRepository;
 
+	public Boolean executar = Boolean.TRUE;
+
 	public void removeEvento(String nome) {
 		Thread thread = configuracoes.get(nome);
 		thread.stop();
@@ -70,28 +72,38 @@ public class JobServiceImpl implements JobService {
 
 	@Override
 	public void startService() {
-		Calendar cal = Calendar.getInstance();
 
-		String hr = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
-		if (hr.length() <= 1)
-			hr = "0".concat(hr);
+		while (executar) {
+			Calendar cal = Calendar.getInstance();
 
-		String mins = String.valueOf(cal.get(Calendar.MINUTE));
-		if (mins.length() <= 1)
-			mins = "0".concat(mins);
-		hr = hr.concat(mins);
+			String hr = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
+			if (hr.length() <= 1)
+				hr = "0".concat(hr);
 
-		List<Configuracao> list = configuracaoRepository.getConfiguracoesAtivas(hr);
+			String mins = String.valueOf(cal.get(Calendar.MINUTE));
+			if (mins.length() <= 1)
+				mins = "0".concat(mins);
+			hr = hr.concat(mins);
 
-		for (Configuracao configuracao : list) {
-			if (isNull(configuracoes.get(configuracao.getDescricao()))) {
-				Thread t = new Thread(new ControleRedeSocialThread(configuracao, this));
-				try {
-					configuracoes.put(configuracao.getDescricao(), t);
-					t.start();
-				} catch (Exception ex) {
-					log.error(ex.getMessage(), ex);
+			List<Configuracao> list = configuracaoRepository.getConfiguracoesAtivas(hr);
+
+			for (Configuracao configuracao : list) {
+				if (isNull(configuracoes.get(configuracao.getDescricao()))) {
+					Thread t = new Thread(new ControleRedeSocialThread(configuracao, this));
+					try {
+						configuracoes.put(configuracao.getDescricao(), t);
+						t.start();
+					} catch (Exception ex) {
+						log.error(ex.getMessage(), ex);
+					}
 				}
+			}
+
+			try {
+				// Aguardar 1 hora para rodar novamente
+				Thread.currentThread().sleep(1000 * 60 * 10);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage(), e);
 			}
 		}
 	}
